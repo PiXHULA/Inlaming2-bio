@@ -5,21 +5,21 @@ import java.util.List;
 
 public class MovieTheater {
 
-    private List<Movie> movieLista;
-    private String movieName;
+    private List<Movie> movieList;
+    private String movieTitle;
 
-    MovieTheater(String movieName) {
-        this.movieName = movieName;
-        movieLista = new ArrayList<>();
+    MovieTheater(String movieTitle) {
+        this.movieTitle = movieTitle;
+        movieList = new ArrayList<>();
         addMovie(new Movie("Life about Nadja"));
         addMovie(new Movie("What about dead baby Jesus"));
     }
 
     public void addMovie(Movie movie) {
-        movieLista.add(movie);
+        movieList.add(movie);
     }
 
-    public List<Movie> getMovieLista() {
-        return movieLista;
+    public List<Movie> getMovieList() {
+        return movieList;
     }
 }

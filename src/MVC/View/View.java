@@ -20,18 +20,18 @@ public class View {
         while (true) {
             printMessage("Välj film");
             controller.showMovies();
-            input1 = sc.nextLine().toLowerCase();
+            input1 = sc.nextLine().toLowerCase().trim();
             switch (input1) {
                 case "1":
                     controller.showMovie(Integer.parseInt(input1)-1);
                     printMessage("Välj funktion. Boka biljett, Avboka biljett, Visa lediga platser");
-                    input2 = sc.nextLine().toLowerCase();
+                    input2 = sc.nextLine().toLowerCase().trim();
                     controller.manageSeats(input1, input2);
                     break;
                 case "2":
                     controller.showMovie(Integer.parseInt(input1)-1);
                     printMessage("Välj funktion. Boka biljett, Avboka biljett, Visa lediga platser");
-                    input2 = sc.nextLine().toLowerCase();
+                    input2 = sc.nextLine().toLowerCase().trim();
                     controller.manageSeats(input1, input2);
                     break;
                 default:

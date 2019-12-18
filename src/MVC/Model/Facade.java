@@ -4,6 +4,7 @@ import MVC.Controller.IObserver;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class Facade implements ISubject {
     private MovieTheater movieTheater;
@@ -26,16 +27,17 @@ public class Facade implements ISubject {
     public List<String> showMovies() {
         List<String> movieName = new ArrayList<>();
         int counter = 1;
-        for (Movie movie : movieTheater.getMovieLista()) {
+        for (Movie movie : movieTheater.getMovieList()) {
             movieName.add(counter + ") " + movie.getMovieTitle());
             counter++;
         }
         return movieName;
     }
-    public String showMovie(String movieChoice){
+
+    public String showMovie(String movieChoice) {
         List<String> movieName = new ArrayList<>();
         int counter = 1;
-        for (Movie movie : movieTheater.getMovieLista()) {
+        for (Movie movie : movieTheater.getMovieList()) {
             movieName.add(counter + ") " + movie.getMovieTitle());
             counter++;
         }
@@ -44,19 +46,22 @@ public class Facade implements ISubject {
 
     public List<String> getAvailableTickets(String movieChoice) {
         List<String> ticketList = new ArrayList<>();
-        for (int i = 0; i < movieTheater.getMovieLista().get(Integer.parseInt(movieChoice) - 1).getTickets().length; i++) {
-            ticketList.add("" + movieTheater.getMovieLista().get(Integer.parseInt(movieChoice) - 1).getTickets()[i]);
+        for (int i = 0; i < movieTheater.getMovieList().get(Integer.parseInt(movieChoice) - 1).getTickets().length; i++) {
+            ticketList.add("" + movieTheater.getMovieList().get(Integer.parseInt(movieChoice) - 1).getTickets()[i]);
         }
         return ticketList;
     }
 
     public boolean ticketStatus(String movieChoice, String ticketChoice) {
-        return movieTheater.getMovieLista().get(Integer.parseInt(movieChoice) -1).getTickets()[Integer.parseInt(ticketChoice) -1].isUnavailable();
+       // if (!ticketChoice.equals(" "))
+            return movieTheater.getMovieList().get(Integer.parseInt(movieChoice) - 1).getTickets()[Integer.parseInt(ticketChoice) - 1].isUnavailable();
+       // else
+         //   return false;
     }
 
     public boolean ticketsSoldOut(String movieChoice) {
         int counter = 0;
-        for (Ticket ticket : movieTheater.getMovieLista().get(Integer.parseInt(movieChoice) - 1).getTickets()) {
+        for (Ticket ticket : movieTheater.getMovieList().get(Integer.parseInt(movieChoice) - 1).getTickets()) {
             if (ticket.isUnavailable())
                 counter++;
         }
@@ -65,12 +70,12 @@ public class Facade implements ISubject {
 
     public String showTicketStatus(String movieChoice) {
         StringBuilder sb = new StringBuilder("[");
-        for (int i = 0; i < movieTheater.getMovieLista().get(Integer.parseInt(movieChoice) - 1).getTickets().length; i++) {
-            if (!movieTheater.getMovieLista().get(Integer.parseInt(movieChoice) - 1).getTickets()[i].isUnavailable())
+        for (int i = 0; i < movieTheater.getMovieList().get(Integer.parseInt(movieChoice) - 1).getTickets().length; i++) {
+            if (!movieTheater.getMovieList().get(Integer.parseInt(movieChoice) - 1).getTickets()[i].isUnavailable())
                 sb.append("O");
             else
                 sb.append("X");
-            if (i == movieTheater.getMovieLista().get(Integer.parseInt(movieChoice) - 1).getTickets().length - 1)
+            if (i == movieTheater.getMovieList().get(Integer.parseInt(movieChoice) - 1).getTickets().length - 1)
                 sb.append("]");
             else
                 sb.append(", ");
@@ -79,37 +84,68 @@ public class Facade implements ISubject {
     }
 
     public void cancelTicket(String movieChoice, String ticketChoice) {
-        //if (facade.ticketStatus(input1, val))
-        //facade.cancelTicket(input1, val);
-        //else
-        //view.printMessage("Platsen är inte bokad.");
+        int failCounter = 0;
+        int successCounter = 0;
+        StringBuilder fail = new StringBuilder("");
+        StringBuilder success = new StringBuilder("");
         String[] arr = ticketChoice.split(" ");
-        if (arr.length > 1) {
-            for (String s : arr) {
-                movieTheater.getMovieLista().get(Integer.parseInt(movieChoice) - 1).getTickets()[Integer.parseInt(s) - 1].setUnavailable(false);
-            }
-            notify1("cancel tickets");
+        for (String s : arr) {
+            if (!Pattern.matches("[a-zA-Z ]", s)) {
+                if (ticketStatus(movieChoice, s)) {
+                    success.append(s + " ");
+                    movieTheater.getMovieList().get(Integer.parseInt(movieChoice) - 1).getTickets()[Integer.parseInt(s) - 1].setUnavailable(false);
+                    successCounter++;
+                } else if (!ticketStatus(movieChoice, s)) {
+                    fail.append(s + " ");
+                    failCounter++;
+                }
+            } else
+                notify1("fail to write");
         }
-        if (arr.length == 1) {
-            movieTheater.getMovieLista().get(Integer.parseInt(movieChoice) - 1).getTickets()[Integer.parseInt(arr[0]) - 1].setUnavailable(false);
-            notify1("cancel ticket");
+        if (successCounter == 1)
+            notify1("cancel ticket" + success);
+        if (successCounter > 1)
+            notify1("cancel tickets" + success);
+        if (failCounter > 0){
+            notify1("fail to cancel" + fail);
         }
+    }
+    public void sendNotify(String success, int successCounter, String fail, int failCounter){
+        if (successCounter == 1)
+            notify1("cancel ticket" + success);
+        if (successCounter > 1)
+            notify1("cancel tickets" + success);
+        if (failCounter > 0)
+            notify1("fail to cancel" + fail);
     }
 
     public void bookTicket(String movieChoice, String ticketChoice) {
+        int failCounter = 0;
+        int successCounter = 0;
+        StringBuilder fail = new StringBuilder("");
+        StringBuilder success = new StringBuilder("");
         String[] arr = ticketChoice.split(" ");
-        if (arr.length > 1) {
-            for (String s : arr) {
-                movieTheater.getMovieLista().get(Integer.parseInt(movieChoice) - 1).getTickets()[Integer.parseInt(s) - 1].setUnavailable(true);
-            }
-            notify1("book tickets");
+        for (String s : arr) {
+            if (!Pattern.matches("[a-zA-Z ]", s)) {
+                if (!ticketStatus(movieChoice, s)) {
+                    success.append(s + " ");
+                    movieTheater.getMovieList().get(Integer.parseInt(movieChoice) - 1)
+                            .getTickets()[Integer.parseInt(s) - 1].setUnavailable(true);
+                    successCounter++;
+                } else if (ticketStatus(movieChoice, s)) {
+                    fail.append(s + " ");
+                    failCounter++;
+                }
+            } else
+                notify1("fail to write");
         }
-        if (arr.length == 1) {
-            movieTheater.getMovieLista().get(Integer.parseInt(movieChoice) - 1).getTickets()[Integer.parseInt(arr[0]) - 1].setUnavailable(true);
-            notify1("book ticket");
-        }
+        if (successCounter == 1)
+            notify1("book ticket" + success);
+        if (successCounter > 1)
+            notify1("book tickets" + success);
+        if (failCounter > 0)
+            notify1("fail to book" + fail);
     }
-
 
     @Override
     public void notify1(String msg) {
