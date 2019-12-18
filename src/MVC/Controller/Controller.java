@@ -22,8 +22,8 @@ public class Controller implements IObserver {
         view.printMessage(facade.showMovies().get(movieChoice));
     }
 
-    public void showMovieAndTickets(int movieChoice) {
-        view.printMessage(facade.showMovies().get(movieChoice));
+    public void showMovieAndTickets(String movieChoice) {
+        view.printMessage(facade.showMovie(movieChoice));
         facade.getAvailableTickets(movieChoice);
     }
 
@@ -32,56 +32,30 @@ public class Controller implements IObserver {
         String s;
         switch (input2) {
             case "boka":
-                showMovieAndTickets(Integer.parseInt(input1) - 1);
-                view.printMessage(facade.getAvailableTickets(Integer.parseInt(input1) - 1).toString());
-                view.printMessage(facade.showTicketStatus(Integer.parseInt(input1) - 1).toString());
-                if (facade.ticketsSoldOut((Integer.parseInt(input1) - 1)))
+                showMovieAndTickets(input1);
+                view.printMessage(facade.getAvailableTickets(input1).toString());
+                view.printMessage(facade.showTicketStatus(input1).toString());
+                if (facade.ticketsSoldOut(input1))
                     view.printMessage("Föreställningen är fullbokad.");
                 else {
                     view.printMessage("Ange stolsnummer");
                     sc = new Scanner(System.in);
-                    s = sc.nextLine();
-                    sc = new Scanner(s);
-
-                    while (sc.hasNextLine()) {
-                        try {
-                            int val = sc.nextInt();
-                            if (!facade.ticketStatus((Integer.parseInt(input1) - 1), val - 1))
-                                facade.bookTicket(Integer.parseInt(input1) - 1, val - 1);
-                            else
-                                view.printMessage("Platsen är redan bokad.");
-                        } catch (Exception e) {
-                            view.printMessage("Felaktig inmatning");
-                        }
-                    }
+                    facade.bookTicket(input1, sc.nextLine());
                 }
                 break;
             case "avboka":
-                showMovieAndTickets(Integer.parseInt(input1) - 1);
-                view.printMessage(facade.getAvailableTickets(Integer.parseInt(input1) - 1).toString());
-                view.printMessage(facade.showTicketStatus(Integer.parseInt(input1) - 1).toString());
-
+                showMovieAndTickets(input1);
+                view.printMessage(facade.getAvailableTickets(input1).toString());
+                view.printMessage(facade.showTicketStatus(input1).toString());
                 view.printMessage("Ange stolsnummer");
                 sc = new Scanner(System.in);
-                s = sc.nextLine();
-                sc = new Scanner(s);
-
-                while (sc.hasNextInt()) {
-                    try {
-                        int val = sc.nextInt();
-                        if (facade.ticketStatus((Integer.parseInt(input1) - 1), val - 1))
-                            facade.cancelTicket(Integer.parseInt(input1) - 1, val - 1);
-                        else
-                            view.printMessage("Platsen är inte bokad.");
-                    } catch (Exception e) {
-                        view.printMessage("Felaktig inmatning");
-                    }
-                }
+                String val = sc.nextLine();
+                facade.cancelTicket(input1, val);
                 break;
             case "visa":
-                showMovieAndTickets(Integer.parseInt(input1) - 1);
-                view.printMessage(facade.getAvailableTickets(Integer.parseInt(input1) - 1).toString());
-                view.printMessage(facade.showTicketStatus(Integer.parseInt(input1) - 1));
+                showMovieAndTickets(input1);
+                view.printMessage(facade.getAvailableTickets(input1).toString());
+                view.printMessage(facade.showTicketStatus(input1));
                 break;
             default:
                 view.printMessage("Testa igen");
@@ -90,12 +64,19 @@ public class Controller implements IObserver {
 
     @Override
     public void update(String msg) {
-        if(msg.startsWith("add"))
+        if (msg.startsWith("add"))
             view.printMessage("Ny bio har lagts till");
-        if(msg.startsWith("book"))
-            view.printMessage("Platsen är bokad");
-        if(msg.startsWith("cancel"))
-            view.printMessage("Platsen är avbokad");
+        if (msg.startsWith("book")) {
+            if (msg.equalsIgnoreCase("book ticket"))
+                view.printMessage("Platsen är bokad");
+            if (msg.equalsIgnoreCase("book tickets"))
+                view.printMessage("Platserna är bokade");
+        }
+        if (msg.startsWith("cancel"))
+            if (msg.equalsIgnoreCase("cancel ticket"))
+                view.printMessage("Platsen är avbokad");
+        if (msg.equalsIgnoreCase("cancel tickets"))
+            view.printMessage("Platserna är avbokade");
     }
 
     public Facade getFacade() {
