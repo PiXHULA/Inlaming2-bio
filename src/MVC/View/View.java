@@ -1,7 +1,6 @@
 package MVC.View;
 
 import MVC.Controller.Controller;
-
 import java.util.Scanner;
 
 public class View {
@@ -14,22 +13,24 @@ public class View {
         System.out.println(message);
     }
 
-    public View() throws InterruptedException {
+    public View() {
         Controller controller = new Controller(this);
         sc = new Scanner(System.in);
 
         while (true) {
-            System.out.println("Välj film");
+            printMessage("Välj film");
             controller.showMovies();
             input1 = sc.nextLine().toLowerCase();
             switch (input1) {
                 case "1":
-                    System.out.println("Välj funktion. Boka biljett, Avboka biljett, Visa lediga platser");
+                    controller.showMovie(Integer.parseInt(input1)-1);
+                    printMessage("Välj funktion. Boka biljett, Avboka biljett, Visa lediga platser");
                     input2 = sc.nextLine().toLowerCase();
                     controller.manageSeats(input1, input2);
                     break;
                 case "2":
-                    System.out.println("Välj funktion. Boka biljett, Avboka biljett, Visa lediga platser");
+                    controller.showMovie(Integer.parseInt(input1)-1);
+                    printMessage("Välj funktion. Boka biljett, Avboka biljett, Visa lediga platser");
                     input2 = sc.nextLine().toLowerCase();
                     controller.manageSeats(input1, input2);
                     break;

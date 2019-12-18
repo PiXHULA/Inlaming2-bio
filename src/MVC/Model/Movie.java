@@ -1,12 +1,13 @@
 package MVC.Model;
 
 public class Movie {
-    private Ticket[] biljetter;
-    private String filmNamn;
 
-    public Movie(String filmNamn){
-        this.filmNamn = filmNamn;
-        biljetter = new Ticket[]{
+    private Ticket[] tickets;
+    private String movieTitle;
+
+    public Movie(String movieTitle){
+        this.movieTitle = movieTitle;
+        tickets = new Ticket[]{
                 new Ticket("1"),
                 new Ticket("2"),
                 new Ticket("3"),
@@ -20,17 +21,17 @@ public class Movie {
         };
     }
 
-    public String getFilmName() {
-        return filmNamn;
+    public String getMovieTitle() {
+        return movieTitle;
     }
 
     public Ticket[] getTickets() {
-        return biljetter;
+        return tickets;
     }
 
 
     @Override
     public String toString() {
-        return this.filmNamn;
+        return this.movieTitle;
     }
 }

@@ -6,31 +6,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Facade implements ISubject {
-    MovieTheater movieTheater;
-    List<IObserver> observerList;
+   private MovieTheater movieTheater;
+   private List<IObserver> observerList;
 
     public Facade() {
         this.movieTheater = new MovieTheater("Mall of Scandinavia");
         this.observerList = new ArrayList<>();
     }
 
-    public void createSalong(String salongName) {
-        this.movieTheater = new MovieTheater(salongName);
+    public void createSalong(String theaterName) {
+        this.movieTheater = new MovieTheater(theaterName);
     }
 
-    public void addFilmTillSalong(String filmTitel) throws InterruptedException {
-        movieTheater.addMovie(new Movie(filmTitel));
-        notify1();
+    public void addMovieToTheater(String movieTitle){
+        movieTheater.addMovie(new Movie(movieTitle));
+        notify1("add movie");
     }
 
     public List<String> showMovies() {
-        List<String> filmNamn = new ArrayList<>();
+        List<String> movieName = new ArrayList<>();
         int counter = 1;
         for (Movie movie : movieTheater.getMovieLista()){
-            filmNamn.add(counter + ") " + movie.getFilmName());
+            movieName.add(counter + ") " + movie.getMovieTitle());
             counter++;
         }
-        return filmNamn;
+        return movieName;
     }
 
     public List<String> getAvailableTickets(int movieChoice) {
@@ -42,6 +42,15 @@ public class Facade implements ISubject {
     }
     public boolean ticketStatus(int movieChoice, int ticketChoice){
         return movieTheater.getMovieLista().get(movieChoice).getTickets()[ticketChoice].isUnavailable();
+    }
+
+    public boolean ticketsSoldOut(int movieChoice){
+        int counter = 0;
+        for(Ticket ticket : movieTheater.getMovieLista().get(movieChoice).getTickets()){
+            if(ticket.isUnavailable())
+                counter++;
+        }
+        return counter == 10;
     }
 
     public String showTicketStatus(int movieChoice) {
@@ -61,17 +70,19 @@ public class Facade implements ISubject {
 
     public void cancelTicket(int movieChoice, int ticketChoice){
         movieTheater.getMovieLista().get(movieChoice).getTickets()[ticketChoice].setUnavailable(false);
+        notify1("cancel");
     }
 
-    public void bookTicket(int filmVal, int biljettVal) {
-        movieTheater.getMovieLista().get(filmVal).getTickets()[biljettVal].setUnavailable(true);
-        notify1();
+    public void bookTicket(int movieChoice, int ticketChoice) {
+        movieTheater.getMovieLista().get(movieChoice).getTickets()[ticketChoice].setUnavailable(true);
+        notify1("book ticket");
     }
+
 
     @Override
-    public void notify1() {
+    public void notify1(String msg) {
         for (IObserver observer : observerList) {
-            observer.update();
+            observer.update(msg);
         }
     }
 
