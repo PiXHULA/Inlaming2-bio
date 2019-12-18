@@ -99,21 +99,7 @@ public class Facade implements ISubject {
             } else
                 notify1("fail to write");
         }
-        if (successCounter == 1)
-            notify1("cancel ticket" + success);
-        if (successCounter > 1)
-            notify1("cancel tickets" + success);
-        if (failCounter > 0){
-            notify1("fail to cancel" + fail);
-        }
-    }
-    public void sendNotify(String success, int successCounter, String fail, int failCounter){
-        if (successCounter == 1)
-            notify1("cancel ticket" + success);
-        if (successCounter > 1)
-            notify1("cancel tickets" + success);
-        if (failCounter > 0)
-            notify1("fail to cancel" + fail);
+        sendNotify("cancel", success, successCounter, fail, failCounter);
     }
 
     public void bookTicket(String movieChoice, String ticketChoice) {
@@ -136,12 +122,16 @@ public class Facade implements ISubject {
             } else
                 notify1("fail to write");
         }
+        sendNotify("book", success, successCounter, fail, failCounter);
+    }
+
+    public void sendNotify(String message, StringBuilder success, int successCounter, StringBuilder fail, int failCounter){
         if (successCounter == 1)
-            notify1("book ticket" + success);
+            notify1(message + " ticket" + success);
         if (successCounter > 1)
-            notify1("book tickets" + success);
+            notify1(message + " tickets" + success);
         if (failCounter > 0)
-            notify1("fail to book" + fail);
+            notify1("fail to cancel" + fail);
     }
 
     @Override
