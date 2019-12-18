@@ -53,10 +53,7 @@ public class Facade implements ISubject {
     }
 
     public boolean ticketStatus(String movieChoice, String ticketChoice) {
-       // if (!ticketChoice.equals(" "))
             return movieTheater.getMovieList().get(Integer.parseInt(movieChoice) - 1).getTickets()[Integer.parseInt(ticketChoice) - 1].isUnavailable();
-       // else
-         //   return false;
     }
 
     public boolean ticketsSoldOut(String movieChoice) {
