@@ -95,7 +95,7 @@ public class Controller implements IObserver {
                         + "] var redan uppbokade");
             if (msg.startsWith("fail to book")  && msg.length() <= 15)
                 view.printMessage("Plats [" + msg.substring(msg.lastIndexOf("k")+1, msg.length()-1)
-                        + "] är inte bokad än");
+                        + "] är redan uppbokad");
             if (msg.startsWith("fail to write"))
                 view.printMessage("Verkar som det blivit fel med någon/några utav inmatningarna, testa igen.");
         }

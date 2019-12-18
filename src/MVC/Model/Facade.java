@@ -131,7 +131,7 @@ public class Facade implements ISubject {
         if (successCounter > 1)
             notify1(message + " tickets" + success);
         if (failCounter > 0)
-            notify1("fail to cancel" + fail);
+            notify1("fail to " + message + fail);
     }
 
     @Override
